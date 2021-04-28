@@ -1,0 +1,23 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: MarginRouter
+    network: mainnet
+    source:
+      address: "0xb80d5989F2ecB199603740197Ce9223b239547E0"
+      abi: MarginRouter
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - AccountUpdated
+      abis:
+        - name: MarginRouter
+          file: ./abis/MarginRouter.json
+      eventHandlers:
+        - event: AccountUpdated(indexed address)
+          handler: handleAccountUpdated
+      file: ./src/mapping.ts
