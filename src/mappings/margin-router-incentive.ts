@@ -3,8 +3,8 @@ import {
   MarginRouterIncentive,
   AddToClaim,
   SubtractFromClaim
-} from "../generated/MarginRouterIncentive/MarginRouterIncentive"
-import { ExampleEntity } from "../generated/schema"
+} from "../../generated/MarginRouterIncentive/MarginRouterIncentive"
+import { ExampleEntity } from "../../generated/schema"
 
 export function handleAddToClaim(event: AddToClaim): void {
   // Entities can be loaded from the store using a string ID; this ID
