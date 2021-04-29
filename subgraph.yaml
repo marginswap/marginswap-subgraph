@@ -43,10 +43,10 @@ dataSources:
         - name: IncentiveReporter
           file: ./abis/IncentiveReporter.json
       eventHandlers:
-        - event: AddToClaimAmount(address, indexed address, uint256)
-          handler: handleAddToClaimAmount
-        - event: SubtractFromClaimAmount(address, indexed address, uint256)
-          handler: handleSubtractFromClaimAmount
+        - event: AddToClaim(address,indexed address,uint256)
+          handler: handleAddToClaim
+        - event: SubtractFromClaim(address,indexed address,uint256)
+          handler: handleSubtractFromClaim
       file: ./src/mappings/margin-router-incentive.ts
   # - kind: ethereum/contract
   #   name: Lending
