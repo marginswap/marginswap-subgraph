@@ -24,29 +24,49 @@ dataSources:
       eventHandlers:
         - event: AccountUpdated(indexed address)
           handler: handleAccountUpdated
-        - event: AddToClaimAmount(address, indexed address, uint256)
-          handler: handleAddToClaimAmount
-        - event: SubtractFromClaimAmount(address, indexed address, uint256)
-          handler: handleSubtractFromClaimAmount
-      file: ./src/mappings/margin-router.ts
-  - kind: ethereum/contract
-    name: Lending
+  -kind: ethereum/contract
+    name: MarginRouterIncentive
     network: mainnet
     source:
-      address: "0x7f86b902CFEeFd6Ba9180B643abea2f29525b237"
-      abi: Lending
+      address: "0xb80d5989F2ecB199603740197Ce9223b239547E0"
+      abi: IncentiveReporter
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - HourlyBondSubscription
+        - CrossMarginAccount
+        - CrossMarginToken
+        - Claim
       abis:
-        - name: Lending
-          file: ./abis/Lending.json
+        - name: MarginRouter
+          file: ./abis/MarginRouter.json
+        - name: IncentiveReporter
+          file: ./abis/IncentiveReporter.json
       eventHandlers:
         - event: AddToClaimAmount(address, indexed address, uint256)
           handler: handleAddToClaimAmount
         - event: SubtractFromClaimAmount(address, indexed address, uint256)
           handler: handleSubtractFromClaimAmount
-      file: ./src/mappings/lending.ts
+      file: ./src/mappings/margin-router-incentive.ts
+  # - kind: ethereum/contract
+  #   name: Lending
+  #   network: mainnet
+  #   source:
+  #     address: "0x7f86b902CFEeFd6Ba9180B643abea2f29525b237"
+  #     abi: Lending
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - HourlyBondSubscription
+  #     abis:
+  #       - name: Lending
+  #         file: ./abis/Lending.json
+  #     eventHandlers:
+  #       - event: AddToClaimAmount(address, indexed address, uint256)
+  #         handler: handleAddToClaimAmount
+  #       - event: SubtractFromClaimAmount(address, indexed address, uint256)
+  #         handler: handleSubtractFromClaimAmount
+  #     file: ./src/mappings/lending.ts
