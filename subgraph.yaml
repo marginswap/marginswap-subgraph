@@ -24,7 +24,7 @@ dataSources:
       eventHandlers:
         - event: AccountUpdated(indexed address)
           handler: handleAccountUpdated
-  -kind: ethereum/contract
+  - kind: ethereum/contract
     name: MarginRouterIncentive
     network: mainnet
     source:
