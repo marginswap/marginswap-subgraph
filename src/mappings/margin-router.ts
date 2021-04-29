@@ -2,8 +2,8 @@ import { BigInt } from "@graphprotocol/graph-ts"
 import {
   MarginRouter,
   AccountUpdated
-} from "../generated/MarginRouter/MarginRouter"
-import { ExampleEntity } from "../generated/schema"
+} from "../../generated/MarginRouter/MarginRouter"
+import { ExampleEntity } from "../../generated/schema"
 
 export function handleAccountUpdated(event: AccountUpdated): void {
   // Entities can be loaded from the store using a string ID; this ID
@@ -20,7 +20,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
   }
 
   // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+  //\entity.count = entity.count + BigInt.fromI32(1)
 
   // Entity fields can be set based on event parameters
   entity.trader = event.params.trader
