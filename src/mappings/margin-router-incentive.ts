@@ -1,9 +1,9 @@
 import { BigInt } from "@graphprotocol/graph-ts"
 import {
-  MarginRouter,
+  MarginRouterIncentive,
   AddToClaim,
   SubtractFromClaim
-} from "../generated/MarginRouter/MarginRouter"
+} from "../generated/MarginRouterIncentive/MarginRouterIncentive"
 import { ExampleEntity } from "../generated/schema"
 
 export function handleAddToClaim(event: AddToClaim): void {

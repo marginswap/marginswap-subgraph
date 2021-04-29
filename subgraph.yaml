@@ -24,7 +24,7 @@ dataSources:
       eventHandlers:
         - event: AccountUpdated(indexed address)
           handler: handleAccountUpdated
-      file ./src/mappings/margin-router.ts
+      file: ./src/mappings/margin-router.ts
   - kind: ethereum/contract
     name: MarginRouterIncentive
     network: mainnet
@@ -40,8 +40,6 @@ dataSources:
         - CrossMarginToken
         - Claim
       abis:
-        - name: MarginRouter
-          file: ./abis/MarginRouter.json
         - name: IncentiveReporter
           file: ./abis/IncentiveReporter.json
       eventHandlers:
