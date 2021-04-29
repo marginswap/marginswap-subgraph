@@ -21,11 +21,11 @@ export function handleAddToClaim(event: AddToClaim): void {
   }
 
   // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+  // entity.count = entity.count + BigInt.fromI32(1)
 
   // Entity fields can be set based on event parameters
-  entity.topic = event.params.topic
-  entity.claimant = event.params.claimant
+  // entity.topic = event.params.topic
+  // entity.claimant = event.params.claimant
 
   // Entities can be written to the store with `.save()`
   entity.save()
