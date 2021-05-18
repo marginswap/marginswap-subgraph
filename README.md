@@ -10,4 +10,8 @@
 - Build the code `yarn build`
 - Deploy the subgraph locally: `yarn deploy-local`
 - Visit `http://localhost:8000/subgraphs/name/marginswap/marginswap-subgraph/graphql`
-- For logs, click on Docker Desktop > docker > docker_graph_node_1
+
+### Logs
+There are two options for getting logs:
+1. For basic logs, click on Docker Desktop > docker > docker_graph_node_1
+2. For more detailed, debug logs, run `sudo docker ps -a` then get the ID for the graph-node container, and then run `sudo docker logs -f <project-id>`

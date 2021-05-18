@@ -1,79 +1,23 @@
-# enum TxnType {
-#   BOND_DEPOSIT
-#   BOND_WITHDRAWAL
-#   CROSS_MARGIN_DEPOSIT
-#   CROSS_MARGIN_BORROW
-#   CROSS_MARGIN_TRADE
-#   # ISOLATED_MARGIN_DEPOSIT
-#   # ISOLATED_MARGIN_BORROW
-# }
-
-# enum BalanceType {
-#   CROSS_MARGIN_HOLDING
-#   CROSS_MARGIN_DEBT
-#   ISOLATED_MARGIN_HOLDING
-#   ISOLATED_MARGIN_DEBT
-#   BOND_DEPOSIT
-# }
-
-# type Account @entity {
-#   id: ID! # the trader's address
-# }
-
-# type Balance @entity {
-#   id: ID!
-#   traderAddress: ID!
-#   token: Bytes! # token address
-#   balance: BigInt
-#   balanceType: BalanceType!
-#   contract: Bytes! # contract address
-# }
-
-# a "Balance" is the balance of a bond, isolated margin, or margin account
-# type BalanceAmountChange @entity {
-#   id: ID!
-#   trader: Bytes! # address
-#   amount: BigInt!
-#   txnType: TxnType!
-#   balance: BigInt! # the balance of the account after the trade
-#   interestRate: BigInt!
-#   token: Bytes! #address
-#   fromToken: 
-# }
-
-# type Swap @entity {
-#   id: ID!
-
-# }
-
-
-# type Account @entity {
-#   id: ID! # the trader's address
-#   # lenderBalances: [ID!]
-# }
-
-type LenderBalance @entity {
-  id: ID! # ID format is <trader-address>-<token-address>
-  # accountId: ID!
-  trader: Bytes! #address
-  balance: BigInt!
-  token: Bytes! #address
+enum BalanceType {
+  CROSS_MARGIN_HOLDING
+  CROSS_MARGIN_DEBT
+  ISOLATED_MARGIN_HOLDING
+  ISOLATED_MARGIN_DEBT
+  BOND_DEPOSIT
 }
 
-type AggregatedTokenLendingBalance @entity {
-  id: ID! # must be the token address
+type Balance @entity {
+  id: ID! # ID format is <trader-address>-<token-address>-<BalanceType>
+  trader: Bytes! # trader address
+  token: Bytes! # token address
   balance: BigInt!
+  balanceType: BalanceType!
+  contract: Bytes! # contract address
 }
 
-# type AggregatedTotalLendingBalance @entity {
-#   id: ID!
-# }
-
-
-
-
-
-
-
-
-
+type AggregatedBalance @entity {
+  id: ID! # ID format is <token-address>-<BalanceType>
+  balance: BigInt!
+  balanceType: BalanceType!
+  contract: Bytes! # contract address
+}

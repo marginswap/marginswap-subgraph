@@ -4,15 +4,16 @@ import {
   AddToClaim,
   SubtractFromClaim
 } from "../../generated/Lending/Lending"
-import { LenderBalance, AggregatedTokenLendingBalance } from "../../generated/schema"
+import { Balance, AggregatedBalance } from "../../generated/schema"
 
 function handleClaimChange(contract: Lending, topic: Address, claimant: Address): void {
   let lenderBalanceId = claimant.toHex() + '-' + topic.toHex()
-  let lenderBalance = LenderBalance.load(lenderBalanceId)
+  let aggregatedBalanceId = topic.toHex() + '-BOND_DEPOSIT'
+  let lenderBalance = Balance.load(lenderBalanceId)
   let newBalance = contract.hourlyBondAccounts(topic, claimant).value0
-  let aggregatedBalance = AggregatedTokenLendingBalance.load(topic.toHex())
+  let aggregatedBalance = AggregatedBalance.load(aggregatedBalanceId)
   let originalBalance = BigInt.fromString('0')
-  
+
   if (lenderBalance) {
     originalBalance = lenderBalance.balance
   }
@@ -20,8 +21,10 @@ function handleClaimChange(contract: Lending, topic: Address, claimant: Address)
   if (aggregatedBalance) {
     aggregatedBalance.balance = aggregatedBalance.balance.minus(originalBalance).plus(newBalance)
   } else {
-    aggregatedBalance = new AggregatedTokenLendingBalance(topic.toHex())
+    aggregatedBalance = new AggregatedBalance(aggregatedBalanceId)
     aggregatedBalance.balance = newBalance
+    aggregatedBalance.balanceType = 'BOND_DEPOSIT'
+    aggregatedBalance.contract = contract._address
   }
 
   aggregatedBalance.save()
@@ -29,10 +32,12 @@ function handleClaimChange(contract: Lending, topic: Address, claimant: Address)
   if (lenderBalance) {
     lenderBalance.balance = newBalance
   } else {
-    lenderBalance = new LenderBalance(lenderBalanceId)
+    lenderBalance = new Balance(lenderBalanceId)
     lenderBalance.trader = claimant
     lenderBalance.token = topic
     lenderBalance.balance = newBalance
+    lenderBalance.balanceType = 'BOND_DEPOSIT'
+    lenderBalance.contract = contract._address
   }
 
   lenderBalance.save()
