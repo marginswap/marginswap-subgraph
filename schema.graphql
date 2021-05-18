@@ -17,6 +17,7 @@ type Balance @entity {
 
 type AggregatedBalance @entity {
   id: ID! # ID format is <token-address>-<BalanceType>
+  token: Bytes! # token address
   balance: BigInt!
   balanceType: BalanceType!
   contract: Bytes! # contract address

@@ -25,6 +25,7 @@ function handleClaimChange(contract: Lending, topic: Address, claimant: Address)
     aggregatedBalance.balance = newBalance
     aggregatedBalance.balanceType = 'BOND_DEPOSIT'
     aggregatedBalance.contract = contract._address
+    aggregatedBalance.token = topic
   }
 
   aggregatedBalance.save()

@@ -40,6 +40,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
       aggregatedHoldingBalanceEntity.balance = balance
       aggregatedHoldingBalanceEntity.balanceType = 'CROSS_MARGIN_HOLDING'
       aggregatedHoldingBalanceEntity.contract = contract._address
+      aggregatedHoldingBalanceEntity.token = token
     }
 
     aggregatedHoldingBalanceEntity.save()
@@ -86,6 +87,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
       aggregatedBorrowBalanceEntity.balance = balance
       aggregatedBorrowBalanceEntity.balanceType = 'CROSS_MARGIN_DEBT'
       aggregatedBorrowBalanceEntity.contract = contract._address
+      aggregatedBorrowBalanceEntity.token = token
     }
 
     aggregatedBorrowBalanceEntity.save()

@@ -118,6 +118,15 @@ export class AggregatedBalance extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get token(): Bytes {
+    let value = this.get("token");
+    return value.toBytes();
+  }
+
+  set token(value: Bytes) {
+    this.set("token", Value.fromBytes(value));
+  }
+
   get balance(): BigInt {
     let value = this.get("balance");
     return value.toBigInt();
