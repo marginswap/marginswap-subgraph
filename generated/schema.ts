@@ -12,7 +12,7 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class LenderBalance extends Entity {
+export class Balance extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -20,17 +20,17 @@ export class LenderBalance extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save LenderBalance entity without an ID");
+    assert(id !== null, "Cannot save Balance entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save LenderBalance entity with non-string ID. " +
+      "Cannot save Balance entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("LenderBalance", id.toString(), this);
+    store.set("Balance", id.toString(), this);
   }
 
-  static load(id: string): LenderBalance | null {
-    return store.get("LenderBalance", id) as LenderBalance | null;
+  static load(id: string): Balance | null {
+    return store.get("Balance", id) as Balance | null;
   }
 
   get id(): string {
@@ -51,6 +51,15 @@ export class LenderBalance extends Entity {
     this.set("trader", Value.fromBytes(value));
   }
 
+  get token(): Bytes {
+    let value = this.get("token");
+    return value.toBytes();
+  }
+
+  set token(value: Bytes) {
+    this.set("token", Value.fromBytes(value));
+  }
+
   get balance(): BigInt {
     let value = this.get("balance");
     return value.toBigInt();
@@ -60,17 +69,52 @@ export class LenderBalance extends Entity {
     this.set("balance", Value.fromBigInt(value));
   }
 
-  get token(): Bytes {
-    let value = this.get("token");
+  get balanceType(): string {
+    let value = this.get("balanceType");
+    return value.toString();
+  }
+
+  set balanceType(value: string) {
+    this.set("balanceType", Value.fromString(value));
+  }
+
+  get contract(): Bytes {
+    let value = this.get("contract");
     return value.toBytes();
   }
 
-  set token(value: Bytes) {
-    this.set("token", Value.fromBytes(value));
+  set contract(value: Bytes) {
+    this.set("contract", Value.fromBytes(value));
+  }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
+  }
+
+  get updatedAt(): BigInt | null {
+    let value = this.get("updatedAt");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set updatedAt(value: BigInt | null) {
+    if (value === null) {
+      this.unset("updatedAt");
+    } else {
+      this.set("updatedAt", Value.fromBigInt(value as BigInt));
+    }
   }
 }
 
-export class AggregatedTokenLendingBalance extends Entity {
+export class AggregatedBalance extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -78,23 +122,17 @@ export class AggregatedTokenLendingBalance extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(
-      id !== null,
-      "Cannot save AggregatedTokenLendingBalance entity without an ID"
-    );
+    assert(id !== null, "Cannot save AggregatedBalance entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save AggregatedTokenLendingBalance entity with non-string ID. " +
+      "Cannot save AggregatedBalance entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("AggregatedTokenLendingBalance", id.toString(), this);
+    store.set("AggregatedBalance", id.toString(), this);
   }
 
-  static load(id: string): AggregatedTokenLendingBalance | null {
-    return store.get(
-      "AggregatedTokenLendingBalance",
-      id
-    ) as AggregatedTokenLendingBalance | null;
+  static load(id: string): AggregatedBalance | null {
+    return store.get("AggregatedBalance", id) as AggregatedBalance | null;
   }
 
   get id(): string {
@@ -106,6 +144,15 @@ export class AggregatedTokenLendingBalance extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get token(): Bytes {
+    let value = this.get("token");
+    return value.toBytes();
+  }
+
+  set token(value: Bytes) {
+    this.set("token", Value.fromBytes(value));
+  }
+
   get balance(): BigInt {
     let value = this.get("balance");
     return value.toBigInt();
@@ -113,5 +160,49 @@ export class AggregatedTokenLendingBalance extends Entity {
 
   set balance(value: BigInt) {
     this.set("balance", Value.fromBigInt(value));
+  }
+
+  get balanceType(): string {
+    let value = this.get("balanceType");
+    return value.toString();
+  }
+
+  set balanceType(value: string) {
+    this.set("balanceType", Value.fromString(value));
+  }
+
+  get contract(): Bytes {
+    let value = this.get("contract");
+    return value.toBytes();
+  }
+
+  set contract(value: Bytes) {
+    this.set("contract", Value.fromBytes(value));
+  }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
+  }
+
+  get updatedAt(): BigInt | null {
+    let value = this.get("updatedAt");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set updatedAt(value: BigInt | null) {
+    if (value === null) {
+      this.unset("updatedAt");
+    } else {
+      this.set("updatedAt", Value.fromBigInt(value as BigInt));
+    }
   }
 }

@@ -14,14 +14,14 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - CrossMarginAccount
-        - CrossMarginToken
-        - Claim
+        - Balance
       abis:
         - name: MarginRouter
           file: ./abis/MarginRouter.json
         - name: IncentiveReporter
           file: ./abis/IncentiveReporter.json
+        - name: CrossMarginTrading
+          file: ./abis/CrossMarginTrading.json
       eventHandlers:
         - event: AccountUpdated(indexed address)
           handler: handleAccountUpdated
@@ -62,7 +62,8 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - HourlyBondSubscription
+        - LenderBalance
+        - AggregatedTokenLendingBalance
       abis:
         - name: Lending
           file: ./abis/Lending.json
@@ -74,3 +75,23 @@ dataSources:
         - event: SubtractFromClaim(address,indexed address,uint256)
           handler: handleSubtractFromClaim
       file: ./src/mappings/lending.ts
+  - kind: ethereum/contract
+    name: CrossMarginTrading
+    network: mainnet
+    source:
+      address: "0x06Bd4fb41eA58Db06EfCF2c03C13aE333696DDb3"
+      abi: CrossMarginTrading
+      startBlock: 12308699
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - CrossMarginAccount
+      abis:
+        - name: CrossMarginTrading
+          file: ./abis/CrossMarginTrading.json
+      eventHandlers:
+        - event: AccountUpdated(indexed address)
+          handler: handleAccountUpdated
+      file: ./src/mappings/cross-margin-trading.ts
