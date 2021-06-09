@@ -6,7 +6,7 @@ import {
 } from "../../generated/Lending/Lending"
 import { Balance, AggregatedBalance } from "../../generated/schema"
 
-function handleClaimChange(contract: Lending, topic: Address, claimant: Address): void {
+function handleClaimChange(contract: Lending, topic: Address, claimant: Address, timestamp: BigInt): void {
   let lenderBalanceId = claimant.toHex() + '-' + topic.toHex()
   let aggregatedBalanceId = topic.toHex() + '-BOND_DEPOSIT'
   let lenderBalance = Balance.load(lenderBalanceId)
@@ -20,18 +20,21 @@ function handleClaimChange(contract: Lending, topic: Address, claimant: Address)
 
   if (aggregatedBalance) {
     aggregatedBalance.balance = aggregatedBalance.balance.minus(originalBalance).plus(newBalance)
+    aggregatedBalance.updatedAt = timestamp
   } else {
     aggregatedBalance = new AggregatedBalance(aggregatedBalanceId)
     aggregatedBalance.balance = newBalance
     aggregatedBalance.balanceType = 'BOND_DEPOSIT'
     aggregatedBalance.contract = contract._address
     aggregatedBalance.token = topic
+    aggregatedBalance.createdAt = timestamp
   }
 
   aggregatedBalance.save()
 
   if (lenderBalance) {
     lenderBalance.balance = newBalance
+    lenderBalance.updatedAt = timestamp
   } else {
     lenderBalance = new Balance(lenderBalanceId)
     lenderBalance.trader = claimant
@@ -39,6 +42,7 @@ function handleClaimChange(contract: Lending, topic: Address, claimant: Address)
     lenderBalance.balance = newBalance
     lenderBalance.balanceType = 'BOND_DEPOSIT'
     lenderBalance.contract = contract._address
+    lenderBalance.createdAt = timestamp
   }
 
   lenderBalance.save()
@@ -48,14 +52,16 @@ export function handleAddToClaim(event: AddToClaim): void {
   let contract = Lending.bind(event.address)
   let topic = event.params.topic
   let claimant = event.params.claimant
+  let timestamp = event.block.timestamp
 
-  handleClaimChange(contract, topic, claimant)
+  handleClaimChange(contract, topic, claimant, timestamp)
 }
 
 export function handleSubtractFromClaim(event: SubtractFromClaim): void {
   let contract = Lending.bind(event.address)
   let topic = event.params.topic
   let claimant = event.params.claimant
+  let timestamp = event.block.timestamp
 
-  handleClaimChange(contract, topic, claimant)
+  handleClaimChange(contract, topic, claimant, timestamp)
 }

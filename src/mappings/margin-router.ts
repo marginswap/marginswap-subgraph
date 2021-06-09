@@ -35,12 +35,14 @@ export function handleAccountUpdated(event: AccountUpdated): void {
 
     if (aggregatedHoldingBalanceEntity) {
       aggregatedHoldingBalanceEntity.balance = aggregatedHoldingBalanceEntity.balance.minus(originalHoldingBalance).plus(balance)
+      aggregatedHoldingBalanceEntity.updatedAt = event.block.timestamp
     } else {
       aggregatedHoldingBalanceEntity = new AggregatedBalance(aggregatedHoldingBalanceId)
       aggregatedHoldingBalanceEntity.balance = balance
       aggregatedHoldingBalanceEntity.balanceType = 'CROSS_MARGIN_HOLDING'
       aggregatedHoldingBalanceEntity.contract = contract._address
       aggregatedHoldingBalanceEntity.token = token
+      aggregatedHoldingBalanceEntity.createdAt = event.block.timestamp
     }
 
     aggregatedHoldingBalanceEntity.save()
@@ -48,6 +50,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
     /* Upsert the balance entity for this trader/token/balanceType */
     if (balanceEntity) {
       balanceEntity.balance = balance
+      balanceEntity.updatedAt = event.block.timestamp
     } else {
       balanceEntity = new Balance(balanceEntityId)
       balanceEntity.token = token
@@ -55,6 +58,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
       balanceEntity.balance = balance
       balanceEntity.balanceType = 'CROSS_MARGIN_HOLDING'
       balanceEntity.contract = contract._address
+      balanceEntity.createdAt = event.block.timestamp
     }
 
     balanceEntity.save()
