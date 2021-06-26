@@ -1,6 +1,7 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts"
 import {
-  AccountUpdated
+  AccountUpdated,
+  MarginTrade
 } from "../../generated/MarginRouter/MarginRouter"
 import {
   CrossMarginTrading,
@@ -109,6 +110,8 @@ export function handleAccountUpdated(event: AccountUpdated): void {
 
     balanceEntity.save()
   }
+}
 
-
+export function handleMarginTrade(event: MarginTrade): void {
+  // TODO
 }
