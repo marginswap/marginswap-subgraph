@@ -6,7 +6,7 @@ import {
 import {
   CrossMarginTrading,
 } from "../../generated/CrossMarginTrading/CrossMarginTrading"
-import { Balance, AggregatedBalance } from "../../generated/schema"
+import { Balance, AggregatedBalance, Swap, DailySwapVolume } from "../../generated/schema"
 
 export function handleAccountUpdated(event: AccountUpdated): void {
   /* get the cross margin trading contract */
@@ -93,6 +93,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
       aggregatedBorrowBalanceEntity.balanceType = 'CROSS_MARGIN_DEBT'
       aggregatedBorrowBalanceEntity.contract = contract._address
       aggregatedBorrowBalanceEntity.token = token
+      aggregatedBorrowBalanceEntity.createdAt = event.block.timestamp
     }
 
     aggregatedBorrowBalanceEntity.save()
@@ -106,6 +107,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
       balanceEntity.balance = balance
       balanceEntity.balanceType = 'CROSS_MARGIN_DEBT'
       balanceEntity.contract = contract._address
+      balanceEntity.createdAt = event.block.timestamp
     }
 
     balanceEntity.save()
@@ -113,5 +115,30 @@ export function handleAccountUpdated(event: AccountUpdated): void {
 }
 
 export function handleMarginTrade(event: MarginTrade): void {
-  // TODO
+  let swap = new Swap(event.transaction.hash.toHexString())
+  swap.trader = event.params.trader
+  swap.fromAmount = event.params.fromAmount
+  swap.toAmount = event.params.toAmount
+  swap.fromToken = event.params.fromToken
+  swap.toToken = event.params.toToken
+  swap.type = 'MARGIN'
+  swap.save()
+
+  let timestamp = event.block.timestamp.toI32()
+  let dayID = timestamp / 86400
+  let volumeRecordId = dayID.toString() + '-' + event.params.fromToken.toHexString() + '-MARGIN'
+  let tokenDailyVolume = DailySwapVolume.load(volumeRecordId)
+
+  if (tokenDailyVolume) {
+    tokenDailyVolume.volume = tokenDailyVolume.volume.plus(event.params.fromAmount)
+    tokenDailyVolume.updatedAt = event.block.timestamp
+  }else {
+    tokenDailyVolume = new DailySwapVolume(volumeRecordId)
+    tokenDailyVolume.token = event.params.fromToken
+    tokenDailyVolume.volume = event.params.fromAmount
+    tokenDailyVolume.type = 'MARGIN'
+    tokenDailyVolume.createdAt = event.block.timestamp
+  }
+
+  tokenDailyVolume.save()
 }

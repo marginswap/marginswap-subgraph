@@ -6,6 +6,11 @@ enum BalanceType {
   BOND_DEPOSIT
 }
 
+enum SwapType {
+  SPOT
+  MARGIN
+}
+
 type Balance @entity {
   id: ID! # ID format is <trader-address>-<token-address>-<BalanceType>
   trader: Bytes! # trader address
@@ -23,6 +28,25 @@ type AggregatedBalance @entity {
   balance: BigInt!
   balanceType: BalanceType!
   contract: Bytes! # contract address
+  createdAt: BigInt!
+  updatedAt: BigInt
+}
+
+type Swap @entity {
+  id: ID! # ID is transaction hash
+  trader: Bytes!
+  fromToken: Bytes!
+  toToken: Bytes!
+  fromAmount: BigInt!
+  toAmount: BigInt!
+  type: SwapType!
+}
+
+type DailySwapVolume @entity {
+  id: ID! # <day-id>-<token-address>-<swap-type> (daily ID is event.block.timestamp.toI32() / 86400)
+  token: Bytes!
+  volume: BigInt!
+  type: SwapType!
   createdAt: BigInt!
   updatedAt: BigInt
 }
