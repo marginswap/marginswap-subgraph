@@ -8,13 +8,14 @@ dataSources:
     source:
       address: "0xb80d5989F2ecB199603740197Ce9223b239547E0"
       abi: MarginRouter
-      startBlock: 12307869
+      startBlock: 12650519
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Balance
+        - Swap
       abis:
         - name: MarginRouter
           file: ./abis/MarginRouter.json
@@ -25,6 +26,8 @@ dataSources:
       eventHandlers:
         - event: AccountUpdated(indexed address)
           handler: handleAccountUpdated
+        - event: MarginTrade(indexed address,address,address,uint256,uint256)
+          handler: handleMarginTrade
       file: ./src/mappings/margin-router.ts
   - kind: ethereum/contract
     name: MarginRouterIncentive
@@ -32,7 +35,7 @@ dataSources:
     source:
       address: "0xb80d5989F2ecB199603740197Ce9223b239547E0"
       abi: IncentiveReporter
-      startBlock: 12307869
+      startBlock: 12650519
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -54,9 +57,9 @@ dataSources:
     name: Lending
     network: mainnet
     source:
-      address: "0x7f86b902CFEeFd6Ba9180B643abea2f29525b237"
+      address: "0x47a58Bd6D2567ABb3b7d25637a9BE82a1674b37A"
       abi: Lending
-      startBlock: 12307869
+      startBlock: 12650519
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -79,9 +82,9 @@ dataSources:
     name: CrossMarginTrading
     network: mainnet
     source:
-      address: "0x06Bd4fb41eA58Db06EfCF2c03C13aE333696DDb3"
+      address: "0x1c8F8091860450aa5Ec59DE486adBA0Ed5050642"
       abi: CrossMarginTrading
-      startBlock: 12308699
+      startBlock: 12650518
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -95,3 +98,23 @@ dataSources:
         - event: AccountUpdated(indexed address)
           handler: handleAccountUpdated
       file: ./src/mappings/cross-margin-trading.ts
+  - kind: ethereum/contract
+    name: SpotRouter
+    network: mainnet
+    source:
+      address: "0xC954C8a4436057C2cd6aDb613Fc5418E9289c1C8"
+      abi: SpotRouter
+      startBlock: 12650008
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Swap
+      abis:
+        - name: SpotRouter
+          file: ./abis/SpotRouter.json
+      eventHandlers:
+        - event: SpotTrade(indexed address,address,address,uint256,uint256)
+          handler: handleSpotTrade
+      file: ./src/mappings/spot-router.ts

@@ -28,6 +28,40 @@ export class AccountUpdated__Params {
   }
 }
 
+export class MarginTrade extends ethereum.Event {
+  get params(): MarginTrade__Params {
+    return new MarginTrade__Params(this);
+  }
+}
+
+export class MarginTrade__Params {
+  _event: MarginTrade;
+
+  constructor(event: MarginTrade) {
+    this._event = event;
+  }
+
+  get trader(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get fromToken(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get toToken(): Address {
+    return this._event.parameters[2].value.toAddress();
+  }
+
+  get fromAmount(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get toAmount(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+}
+
 export class MarginRouter extends ethereum.SmartContract {
   static bind(address: Address): MarginRouter {
     return new MarginRouter("MarginRouter", address);
@@ -46,6 +80,96 @@ export class MarginRouter extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  amm1Factory(): Address {
+    let result = super.call("amm1Factory", "amm1Factory():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_amm1Factory(): ethereum.CallResult<Address> {
+    let result = super.tryCall("amm1Factory", "amm1Factory():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  amm1InitHash(): Bytes {
+    let result = super.call("amm1InitHash", "amm1InitHash():(bytes32)", []);
+
+    return result[0].toBytes();
+  }
+
+  try_amm1InitHash(): ethereum.CallResult<Bytes> {
+    let result = super.tryCall("amm1InitHash", "amm1InitHash():(bytes32)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
+  }
+
+  amm2Factory(): Address {
+    let result = super.call("amm2Factory", "amm2Factory():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_amm2Factory(): ethereum.CallResult<Address> {
+    let result = super.tryCall("amm2Factory", "amm2Factory():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  amm2InitHash(): Bytes {
+    let result = super.call("amm2InitHash", "amm2InitHash():(bytes32)", []);
+
+    return result[0].toBytes();
+  }
+
+  try_amm2InitHash(): ethereum.CallResult<Bytes> {
+    let result = super.tryCall("amm2InitHash", "amm2InitHash():(bytes32)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
+  }
+
+  amm3Factory(): Address {
+    let result = super.call("amm3Factory", "amm3Factory():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_amm3Factory(): ethereum.CallResult<Address> {
+    let result = super.tryCall("amm3Factory", "amm3Factory():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  amm3InitHash(): Bytes {
+    let result = super.call("amm3InitHash", "amm3InitHash():(bytes32)", []);
+
+    return result[0].toBytes();
+  }
+
+  try_amm3InitHash(): ethereum.CallResult<Bytes> {
+    let result = super.tryCall("amm3InitHash", "amm3InitHash():(bytes32)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
   authorizedSwapExactT4T(
@@ -414,8 +538,32 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get _roles(): Address {
+  get _amm1Factory(): Address {
     return this._call.inputValues[1].value.toAddress();
+  }
+
+  get _amm2Factory(): Address {
+    return this._call.inputValues[2].value.toAddress();
+  }
+
+  get _amm3Factory(): Address {
+    return this._call.inputValues[3].value.toAddress();
+  }
+
+  get _amm1InitHash(): Bytes {
+    return this._call.inputValues[4].value.toBytes();
+  }
+
+  get _amm2InitHash(): Bytes {
+    return this._call.inputValues[5].value.toBytes();
+  }
+
+  get _amm3InitHash(): Bytes {
+    return this._call.inputValues[6].value.toBytes();
+  }
+
+  get _roles(): Address {
+    return this._call.inputValues[7].value.toAddress();
   }
 }
 
