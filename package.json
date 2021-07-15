@@ -8,13 +8,15 @@
     "create-local": "graph create --node http://localhost:8020/ marginswap/marginswap-subgraph",
     "remove-local": "graph remove --node http://localhost:8020/ marginswap/marginswap-subgraph",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 marginswap/marginswap-subgraph",
-    "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
-    "prepare:polygon": "mustache config/polygon.json subgraph.template.yaml > subgraph.yaml",
-    "prepare:bsc": "mustache config config/bsc.json subgraph.template.yaml > subgraph.yaml"
+    "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml subgraph.yaml",
+    "prepare:polygon": "mustache config/polygon.json subgraph.template.yaml subgraph.yaml",
+    "prepare:bsc": "mustache config config/bsc.json subgraph.template.yaml subgraph.yaml"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.20.0",
-    "@graphprotocol/graph-ts": "0.20.0",
-    "mustache": "^3.1.0"
+    "@graphprotocol/graph-ts": "0.20.0"
+  },
+  "devDependencies": {
+    "mustache": "^4.2.0"
   }
 }
