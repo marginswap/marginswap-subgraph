@@ -9,8 +9,12 @@ import {
 import { Balance, AggregatedBalance, Swap, DailySwapVolume } from "../../generated/schema"
 
 export function handleAccountUpdated(event: AccountUpdated): void {
-  /* get the cross margin trading contract */
-  let contractAddress = Address.fromHexString('0x06Bd4fb41eA58Db06EfCF2c03C13aE333696DDb3') as Address
+  /*
+    NOTE: This address must be manually updated to match the CrossMarginTrading
+    contract on the network you're deploying to.
+    See deployment instructions in the README for more details.
+  */
+  let contractAddress = Address.fromHexString('0x641E534EF49Fa8CC3A702313c8DcA10FAE2E8F42') as Address
   let contract = CrossMarginTrading.bind(contractAddress)
   let trader = event.params.trader
 

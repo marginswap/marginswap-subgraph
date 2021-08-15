@@ -4,7 +4,6 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ marginswap/marginswap-subgraph",
     "create-local": "graph create --node http://localhost:8020/ marginswap/marginswap-subgraph",
     "remove-local": "graph remove --node http://localhost:8020/ marginswap/marginswap-subgraph",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 marginswap/marginswap-subgraph",
