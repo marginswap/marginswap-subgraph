@@ -1,5 +1,5 @@
 {
-  "network": "Matic",
+  "network": "matic",
   "startBlock": 15728787,
   "routerAddress": "0x2EefefAdEFE3c66D7086c8d3B99247D432383731",
   "lendingAddress": "0xCB94B2624Ada3346a4169F0DbF8B31d6D3c1cCfB",
