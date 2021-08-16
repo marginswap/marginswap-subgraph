@@ -1,0 +1,8 @@
+{
+    "network": "mainnet",
+    "startBlock": 12650519,
+    "routerAddress": "0xb80d5989F2ecB199603740197Ce9223b239547E0",
+    "lendingAddress": "0x47a58Bd6D2567ABb3b7d25637a9BE82a1674b37A",
+    "crossMarginTradingAddress": "0x1c8F8091860450aa5Ec59DE486adBA0Ed5050642",
+    "spotRouterAddress": "0xC954C8a4436057C2cd6aDb613Fc5418E9289c1C8"
+}
