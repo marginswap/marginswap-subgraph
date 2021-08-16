@@ -14,7 +14,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
     contract on the network you're deploying to.
     See deployment instructions in the README for more details.
   */
-  let contractAddress = Address.fromHexString('0x641E534EF49Fa8CC3A702313c8DcA10FAE2E8F42') as Address
+  let contractAddress = Address.fromHexString('0x06Bd4fb41eA58Db06EfCF2c03C13aE333696DDb3') as Address
   let contract = CrossMarginTrading.bind(contractAddress)
   let trader = event.params.trader
 
