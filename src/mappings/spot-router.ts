@@ -10,6 +10,7 @@ export function handleSpotTrade(event: SpotTrade): void {
   swap.toAmount = event.params.toAmount
   swap.fromToken = event.params.fromToken
   swap.toToken = event.params.toToken
+  swap.createdAt = event.block.timestamp
   swap.type = 'SPOT'
   swap.save()
 

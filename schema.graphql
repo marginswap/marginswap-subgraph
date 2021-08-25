@@ -40,6 +40,7 @@ type Swap @entity {
   fromAmount: BigInt!
   toAmount: BigInt!
   type: SwapType!
+  createdAt: BigInt!
 }
 
 type DailySwapVolume @entity {

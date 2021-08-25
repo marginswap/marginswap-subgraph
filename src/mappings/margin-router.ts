@@ -125,6 +125,7 @@ export function handleMarginTrade(event: MarginTrade): void {
   swap.toAmount = event.params.toAmount
   swap.fromToken = event.params.fromToken
   swap.toToken = event.params.toToken
+  swap.createdAt = event.block.timestamp
   swap.type = 'MARGIN'
   swap.save()
 

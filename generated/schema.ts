@@ -290,6 +290,15 @@ export class Swap extends Entity {
   set type(value: string) {
     this.set("type", Value.fromString(value));
   }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
+  }
 }
 
 export class DailySwapVolume extends Entity {
