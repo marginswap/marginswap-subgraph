@@ -384,3 +384,70 @@ export class DailySwapVolume extends Entity {
     }
   }
 }
+
+export class MarginswapDayData extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save MarginswapDayData entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save MarginswapDayData entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("MarginswapDayData", id.toString(), this);
+  }
+
+  static load(id: string): MarginswapDayData | null {
+    return store.get("MarginswapDayData", id) as MarginswapDayData | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get dailyVolumeUSD(): BigDecimal {
+    let value = this.get("dailyVolumeUSD");
+    return value.toBigDecimal();
+  }
+
+  set dailyVolumeUSD(value: BigDecimal) {
+    this.set("dailyVolumeUSD", Value.fromBigDecimal(value));
+  }
+
+  get totalVolumeUSD(): BigDecimal {
+    let value = this.get("totalVolumeUSD");
+    return value.toBigDecimal();
+  }
+
+  set totalVolumeUSD(value: BigDecimal) {
+    this.set("totalVolumeUSD", Value.fromBigDecimal(value));
+  }
+
+  get txCount(): BigInt {
+    let value = this.get("txCount");
+    return value.toBigInt();
+  }
+
+  set txCount(value: BigInt) {
+    this.set("txCount", Value.fromBigInt(value));
+  }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
+  }
+}
