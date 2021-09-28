@@ -1,8 +1,9 @@
 import { Address } from '@graphprotocol/graph-ts'
 import { AccountUpdated, MarginTrade } from '../../generated/MarginRouter/MarginRouter'
 import { CrossMarginTrading } from '../../generated/CrossMarginTrading/CrossMarginTrading'
+import { PriceAware } from '../../generated/MarginRouter/PriceAware'
 import { Balance, AggregatedBalance, Swap, DailySwapVolume, MarginswapDayData } from '../../generated/schema'
-import { ONE_BI, ZERO_BI } from '../../utils/constants'
+import { ONE_BI, ZERO_BD, ZERO_BI } from '../../utils/constants'
 
 /*
   NOTE: This address must be manually updated to match the CrossMarginTrading
@@ -118,7 +119,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
 
 export function handleMarginTrade(event: MarginTrade): void {
   let contractAddress = Address.fromHexString(CROSS_MARGIN_CONTRACT_ADDRESS) as Address
-  let crossMarginContract = CrossMarginTrading.bind(contractAddress)
+  let priceAwareContract = PriceAware.bind(contractAddress)
 
   let swap = new Swap(event.transaction.hash.toHexString())
   swap.trader = event.params.trader
@@ -147,20 +148,38 @@ export function handleMarginTrade(event: MarginTrade): void {
     tokenDailyVolume.createdAt = event.block.timestamp
   }
 
-  let tokenPriceInPeg = crossMarginContract.viewCurrentPriceInPeg(event.params.fromToken, event.params.fromAmount).toBigDecimal()
+  let tokenPriceInPeg = priceAwareContract.viewCurrentPriceInPeg(event.params.fromToken, event.params.fromAmount).toBigDecimal()
+  let pastMarginswapDayData = getLatestMarginSwapDayData(18797, dayID)
+  let totalVolumeUSD = ZERO_BD
+
+  if (pastMarginswapDayData) {
+    totalVolumeUSD = pastMarginswapDayData.totalVolumeUSD
+  }
 
   if (marginswapDayData) {
     marginswapDayData.dailyVolumeUSD = marginswapDayData.dailyVolumeUSD.plus(tokenPriceInPeg)
-    marginswapDayData.totalVolumeUSD = marginswapDayData.totalVolumeUSD.plus(tokenPriceInPeg)
+    marginswapDayData.totalVolumeUSD = marginswapDayData.totalVolumeUSD.plus(totalVolumeUSD)
     marginswapDayData.txCount = marginswapDayData.txCount.plus(ONE_BI)
   } else {
     marginswapDayData = new MarginswapDayData(dayID.toString())
     marginswapDayData.dailyVolumeUSD = tokenPriceInPeg
-    marginswapDayData.totalVolumeUSD = tokenPriceInPeg
+    marginswapDayData.totalVolumeUSD = totalVolumeUSD
     marginswapDayData.txCount = ONE_BI
     marginswapDayData.createdAt = event.block.timestamp
   }
 
   tokenDailyVolume.save()
   marginswapDayData.save()
+}
+
+function getLatestMarginSwapDayData(lastDayCheck: number, startDayCheck: number): MarginswapDayData | null {
+  for (let i = startDayCheck - 1; i >= lastDayCheck; i--) {
+    let marginswapDayData = MarginswapDayData.load(startDayCheck.toString())
+
+    if (marginswapDayData) {
+      return marginswapDayData
+    }
+  }
+
+  return null
 }
