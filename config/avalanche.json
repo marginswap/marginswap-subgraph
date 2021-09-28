@@ -1,8 +1,8 @@
 {
   "network": "avalanche",
   "startBlock": 2136786,
-  "routerAddress": "0x01228e1855932F7f39604Ab294390BE583d8254e",
-  "lendingAddress": "0x0576D25BC4fE40b93492702911FDf1866915Acd7",
-  "crossMarginTradingAddress": "0xfDa3e986e38A913aC3300C2eff168d0D69d698B1",
-  "spotRouterAddress": "0x4c15d400949D757E4f18B4f14f91D4A48624d01b"
+  "routerAddress": "0x35b094cB113dA3C2e3a66976Ad8544dc4c994ed1",
+  "lendingAddress": "0x1971Ee4a4840CA48DF4BD0C0A6BAa674F829Fc21",
+  "crossMarginTradingAddress": "0x9B7C61b132d4AaE9df5FB89CEdA297E22760A48A",
+  "spotRouterAddress": "0x07b5Ed1538B478d406eb98b5C55768149D70C929"
 }
