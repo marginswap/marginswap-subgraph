@@ -11,6 +11,7 @@ import { ONE_BI, ZERO_BD, ZERO_BI } from '../../utils/constants'
   See deployment instructions in the README for more details.
 */
 const CROSS_MARGIN_CONTRACT_ADDRESS = '0xfDa3e986e38A913aC3300C2eff168d0D69d698B1'
+const START_DAY_ID = 18797
 
 export function handleAccountUpdated(event: AccountUpdated): void {
   let contractAddress = Address.fromHexString(CROSS_MARGIN_CONTRACT_ADDRESS) as Address
@@ -149,7 +150,7 @@ export function handleMarginTrade(event: MarginTrade): void {
   }
 
   let tokenPriceInPeg = priceAwareContract.viewCurrentPriceInPeg(event.params.fromToken, event.params.fromAmount).toBigDecimal()
-  let pastMarginswapDayData = getLatestMarginSwapDayData(18797, dayID)
+  let pastMarginswapDayData = getLatestMarginSwapDayData(START_DAY_ID, dayID)
   let totalVolumeUSD = ZERO_BD
 
   if (pastMarginswapDayData) {
@@ -158,14 +159,16 @@ export function handleMarginTrade(event: MarginTrade): void {
 
   if (marginswapDayData) {
     marginswapDayData.dailyVolumeUSD = marginswapDayData.dailyVolumeUSD.plus(tokenPriceInPeg)
-    marginswapDayData.totalVolumeUSD = marginswapDayData.totalVolumeUSD.plus(totalVolumeUSD)
+    marginswapDayData.totalVolumeUSD = marginswapDayData.totalVolumeUSD.plus(tokenPriceInPeg)
     marginswapDayData.txCount = marginswapDayData.txCount.plus(ONE_BI)
+    marginswapDayData.updatedAt = event.block.timestamp
   } else {
     marginswapDayData = new MarginswapDayData(dayID.toString())
     marginswapDayData.dailyVolumeUSD = tokenPriceInPeg
-    marginswapDayData.totalVolumeUSD = totalVolumeUSD
+    marginswapDayData.totalVolumeUSD = totalVolumeUSD.plus(tokenPriceInPeg)
     marginswapDayData.txCount = ONE_BI
     marginswapDayData.createdAt = event.block.timestamp
+    marginswapDayData.updatedAt = event.block.timestamp
   }
 
   tokenDailyVolume.save()
@@ -174,7 +177,7 @@ export function handleMarginTrade(event: MarginTrade): void {
 
 function getLatestMarginSwapDayData(lastDayCheck: number, startDayCheck: number): MarginswapDayData | null {
   for (let i = startDayCheck - 1; i >= lastDayCheck; i--) {
-    let marginswapDayData = MarginswapDayData.load(startDayCheck.toString())
+    let marginswapDayData = MarginswapDayData.load(i.toString())
 
     if (marginswapDayData) {
       return marginswapDayData

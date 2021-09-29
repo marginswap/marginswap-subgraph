@@ -58,4 +58,5 @@ type MarginswapDayData @entity {
   totalVolumeUSD: BigDecimal!
   txCount: BigInt!
   createdAt: BigInt!
+  updatedAt: BigInt!
 }
