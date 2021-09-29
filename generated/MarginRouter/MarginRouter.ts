@@ -62,6 +62,106 @@ export class MarginTrade__Params {
   }
 }
 
+export class OrderMade extends ethereum.Event {
+  get params(): OrderMade__Params {
+    return new OrderMade__Params(this);
+  }
+}
+
+export class OrderMade__Params {
+  _event: OrderMade;
+
+  constructor(event: OrderMade) {
+    this._event = event;
+  }
+
+  get orderId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get fromToken(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get toToken(): Address {
+    return this._event.parameters[2].value.toAddress();
+  }
+
+  get inAmount(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get outAmout(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+
+  get maker(): Address {
+    return this._event.parameters[5].value.toAddress();
+  }
+}
+
+export class OrderTaken extends ethereum.Event {
+  get params(): OrderTaken__Params {
+    return new OrderTaken__Params(this);
+  }
+}
+
+export class OrderTaken__Params {
+  _event: OrderTaken;
+
+  constructor(event: OrderTaken) {
+    this._event = event;
+  }
+
+  get orderId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get taker(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get remainingInAmount(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get amountTaken(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
+export class MarginRouter__ordersResult {
+  value0: Address;
+  value1: Address;
+  value2: BigInt;
+  value3: BigInt;
+  value4: Address;
+
+  constructor(
+    value0: Address,
+    value1: Address,
+    value2: BigInt,
+    value3: BigInt,
+    value4: Address
+  ) {
+    this.value0 = value0;
+    this.value1 = value1;
+    this.value2 = value2;
+    this.value3 = value3;
+    this.value4 = value4;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromAddress(this.value0));
+    map.set("value1", ethereum.Value.fromAddress(this.value1));
+    map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
+    map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
+    map.set("value4", ethereum.Value.fromAddress(this.value4));
+    return map;
+  }
+}
+
 export class MarginRouter extends ethereum.SmartContract {
   static bind(address: Address): MarginRouter {
     return new MarginRouter("MarginRouter", address);
@@ -258,6 +358,36 @@ export class MarginRouter extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
+  feeBase(): BigInt {
+    let result = super.call("feeBase", "feeBase():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_feeBase(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("feeBase", "feeBase():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  feeRecipient(): Address {
+    let result = super.call("feeRecipient", "feeRecipient():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_feeRecipient(): ethereum.CallResult<Address> {
+    let result = super.tryCall("feeRecipient", "feeRecipient():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   getAmountsIn(
     outAmount: BigInt,
     amms: Bytes,
@@ -380,6 +510,43 @@ export class MarginRouter extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  orders(param0: BigInt): MarginRouter__ordersResult {
+    let result = super.call(
+      "orders",
+      "orders(uint256):(address,address,uint256,uint256,address)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+
+    return new MarginRouter__ordersResult(
+      result[0].toAddress(),
+      result[1].toAddress(),
+      result[2].toBigInt(),
+      result[3].toBigInt(),
+      result[4].toAddress()
+    );
+  }
+
+  try_orders(param0: BigInt): ethereum.CallResult<MarginRouter__ordersResult> {
+    let result = super.tryCall(
+      "orders",
+      "orders(uint256):(address,address,uint256,uint256,address)",
+      [ethereum.Value.fromUnsignedBigInt(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new MarginRouter__ordersResult(
+        value[0].toAddress(),
+        value[1].toAddress(),
+        value[2].toBigInt(),
+        value[3].toBigInt(),
+        value[4].toAddress()
+      )
+    );
   }
 
   roleCache(param0: Address, param1: BigInt): boolean {
@@ -562,8 +729,16 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[6].value.toBytes();
   }
 
+  get _feeBase(): BigInt {
+    return this._call.inputValues[7].value.toBigInt();
+  }
+
+  get _feeRecipient(): Address {
+    return this._call.inputValues[8].value.toAddress();
+  }
+
   get _roles(): Address {
-    return this._call.inputValues[7].value.toAddress();
+    return this._call.inputValues[9].value.toAddress();
   }
 }
 
@@ -893,6 +1068,108 @@ export class CrossWithdrawETHCall__Outputs {
   }
 }
 
+export class InvalidateOrderCall extends ethereum.Call {
+  get inputs(): InvalidateOrderCall__Inputs {
+    return new InvalidateOrderCall__Inputs(this);
+  }
+
+  get outputs(): InvalidateOrderCall__Outputs {
+    return new InvalidateOrderCall__Outputs(this);
+  }
+}
+
+export class InvalidateOrderCall__Inputs {
+  _call: InvalidateOrderCall;
+
+  constructor(call: InvalidateOrderCall) {
+    this._call = call;
+  }
+
+  get orderId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class InvalidateOrderCall__Outputs {
+  _call: InvalidateOrderCall;
+
+  constructor(call: InvalidateOrderCall) {
+    this._call = call;
+  }
+}
+
+export class MakeOrderCall extends ethereum.Call {
+  get inputs(): MakeOrderCall__Inputs {
+    return new MakeOrderCall__Inputs(this);
+  }
+
+  get outputs(): MakeOrderCall__Outputs {
+    return new MakeOrderCall__Outputs(this);
+  }
+}
+
+export class MakeOrderCall__Inputs {
+  _call: MakeOrderCall;
+
+  constructor(call: MakeOrderCall) {
+    this._call = call;
+  }
+
+  get _fromToken(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _toToken(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get _inAmount(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
+  get _outAmount(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
+  }
+}
+
+export class MakeOrderCall__Outputs {
+  _call: MakeOrderCall;
+
+  constructor(call: MakeOrderCall) {
+    this._call = call;
+  }
+}
+
+export class SetFeeRecipientCall extends ethereum.Call {
+  get inputs(): SetFeeRecipientCall__Inputs {
+    return new SetFeeRecipientCall__Inputs(this);
+  }
+
+  get outputs(): SetFeeRecipientCall__Outputs {
+    return new SetFeeRecipientCall__Outputs(this);
+  }
+}
+
+export class SetFeeRecipientCall__Inputs {
+  _call: SetFeeRecipientCall;
+
+  constructor(call: SetFeeRecipientCall) {
+    this._call = call;
+  }
+
+  get recipient(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetFeeRecipientCall__Outputs {
+  _call: SetFeeRecipientCall;
+
+  constructor(call: SetFeeRecipientCall) {
+    this._call = call;
+  }
+}
+
 export class SwapExactTokensForTokensCall extends ethereum.Call {
   get inputs(): SwapExactTokensForTokensCall__Inputs {
     return new SwapExactTokensForTokensCall__Inputs(this);
@@ -990,6 +1267,78 @@ export class SwapTokensForExactTokensCall__Outputs {
 
   get amounts(): Array<BigInt> {
     return this._call.outputValues[0].value.toBigIntArray();
+  }
+}
+
+export class TakeOrderCall extends ethereum.Call {
+  get inputs(): TakeOrderCall__Inputs {
+    return new TakeOrderCall__Inputs(this);
+  }
+
+  get outputs(): TakeOrderCall__Outputs {
+    return new TakeOrderCall__Outputs(this);
+  }
+}
+
+export class TakeOrderCall__Inputs {
+  _call: TakeOrderCall;
+
+  constructor(call: TakeOrderCall) {
+    this._call = call;
+  }
+
+  get orderId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get maxInAmount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class TakeOrderCall__Outputs {
+  _call: TakeOrderCall;
+
+  constructor(call: TakeOrderCall) {
+    this._call = call;
+  }
+}
+
+export class TakeOrderOnAMMCall extends ethereum.Call {
+  get inputs(): TakeOrderOnAMMCall__Inputs {
+    return new TakeOrderOnAMMCall__Inputs(this);
+  }
+
+  get outputs(): TakeOrderOnAMMCall__Outputs {
+    return new TakeOrderOnAMMCall__Outputs(this);
+  }
+}
+
+export class TakeOrderOnAMMCall__Inputs {
+  _call: TakeOrderOnAMMCall;
+
+  constructor(call: TakeOrderOnAMMCall) {
+    this._call = call;
+  }
+
+  get orderId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get amms(): Bytes {
+    return this._call.inputValues[1].value.toBytes();
+  }
+
+  get tokens(): Array<Address> {
+    return this._call.inputValues[2].value.toAddressArray();
+  }
+}
+
+export class TakeOrderOnAMMCall__Outputs {
+  _call: TakeOrderOnAMMCall;
+
+  constructor(call: TakeOrderOnAMMCall) {
+    this._call = call;
   }
 }
 

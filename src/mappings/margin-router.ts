@@ -1,12 +1,15 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts"
-import {
-  AccountUpdated,
-  MarginTrade
-} from "../../generated/MarginRouter/MarginRouter"
-import {
-  CrossMarginTrading,
-} from "../../generated/CrossMarginTrading/CrossMarginTrading"
-import { Balance, AggregatedBalance, Swap, DailySwapVolume } from "../../generated/schema"
+import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { AccountUpdated, MarginTrade, OrderMade, OrderTaken } from '../../generated/MarginRouter/MarginRouter'
+import { CrossMarginTrading } from '../../generated/CrossMarginTrading/CrossMarginTrading'
+import { Balance, AggregatedBalance, Swap, DailySwapVolume, Order, OrderTaken as TakenOrder } from '../../generated/schema'
+import { ZERO_BI } from '../../utils/constants'
+
+/*
+  NOTE: This address must be manually updated to match the CrossMarginTrading
+  contract on the network you're deploying to.
+  See deployment instructions in the README for more details.
+*/
+const CROSS_MARGIN_CONTRACT_ADDRESS = '0xfDa3e986e38A913aC3300C2eff168d0D69d698B1'
 
 export function handleAccountUpdated(event: AccountUpdated): void {
   /*
@@ -14,7 +17,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
     contract on the network you're deploying to.
     See deployment instructions in the README for more details.
   */
-  let contractAddress = Address.fromHexString('0xfDa3e986e38A913aC3300C2eff168d0D69d698B1') as Address
+  let contractAddress = Address.fromHexString(CROSS_MARGIN_CONTRACT_ADDRESS) as Address
   let contract = CrossMarginTrading.bind(contractAddress)
   let trader = event.params.trader
 
@@ -101,7 +104,7 @@ export function handleAccountUpdated(event: AccountUpdated): void {
     }
 
     aggregatedBorrowBalanceEntity.save()
-    
+
     if (balanceEntity) {
       balanceEntity.balance = balance
     } else {
@@ -137,7 +140,7 @@ export function handleMarginTrade(event: MarginTrade): void {
   if (tokenDailyVolume) {
     tokenDailyVolume.volume = tokenDailyVolume.volume.plus(event.params.fromAmount)
     tokenDailyVolume.updatedAt = event.block.timestamp
-  }else {
+  } else {
     tokenDailyVolume = new DailySwapVolume(volumeRecordId)
     tokenDailyVolume.token = event.params.fromToken
     tokenDailyVolume.volume = event.params.fromAmount
@@ -146,4 +149,39 @@ export function handleMarginTrade(event: MarginTrade): void {
   }
 
   tokenDailyVolume.save()
+}
+
+export function handleOrderMade(event: OrderMade): void {
+  let order = new Order(event.params.orderId.toString())
+  order.fromToken = event.params.fromToken
+  order.toToken = event.params.toToken
+  order.inAmount = event.params.inAmount
+  order.outAmount = event.params.outAmout
+  order.maker = event.params.maker
+  order.remainingInAmount = event.params.inAmount
+  order.amountTaken = ZERO_BI
+  order.createdAt = event.block.timestamp
+  order.updatedAt = event.block.timestamp
+
+  order.save()
+}
+
+export function handleOrderTaken(event: OrderTaken): void {
+  let order = Order.load(event.params.orderId.toString())
+  let orderTaken = new TakenOrder(event.transaction.hash.toHexString())
+
+  if (order) {
+    order.remainingInAmount = event.params.remainingInAmount
+    order.amountTaken = order.amountTaken.plus(event.params.amountTaken)
+    order.save()
+
+    orderTaken.orderId = order.id
+    orderTaken.amountTaken = event.params.amountTaken
+    orderTaken.taker = event.params.taker
+    orderTaken.remainingInAmount = event.params.remainingInAmount
+    orderTaken.createdAt = event.block.timestamp
+    orderTaken.updatedAt = event.block.timestamp
+
+    orderTaken.save()
+  }
 }
