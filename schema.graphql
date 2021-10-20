@@ -51,3 +51,12 @@ type DailySwapVolume @entity {
   createdAt: BigInt!
   updatedAt: BigInt
 }
+
+type MarginswapDayData @entity {
+  id: ID! #timestamp rounded to current day by dividing by 86400
+  dailyVolumeUSD: BigDecimal!
+  totalVolumeUSD: BigDecimal!
+  txCount: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+}
