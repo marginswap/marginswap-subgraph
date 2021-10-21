@@ -1,7 +1,7 @@
 {
     "network": "bsc",
     "startBlock": 8728390,
-    "routerAddress": "0x95e08D82476D85B5b1Ced55A1a7e564C816C6ef5",
+    "routerAddress": "0xEf13Ff3E1749606c11623C8b8064761ba70248e3",
     "lendingAddress": "0x26c723F27B49a8AB8DC84B292359833ff8530889",
     "crossMarginTradingAddress": "0xAa4e3edb11AFa93c41db59842b29de64b72E355B",
     "spotRouterAddress": "0xa94DDbb3Ba629E637F63F54Bae6724c271ccA48f"
