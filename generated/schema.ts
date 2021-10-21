@@ -460,3 +460,200 @@ export class MarginswapDayData extends Entity {
     this.set("updatedAt", Value.fromBigInt(value));
   }
 }
+
+export class Order extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Order entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Order entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Order", id.toString(), this);
+  }
+
+  static load(id: string): Order | null {
+    return store.get("Order", id) as Order | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get fromToken(): Bytes {
+    let value = this.get("fromToken");
+    return value.toBytes();
+  }
+
+  set fromToken(value: Bytes) {
+    this.set("fromToken", Value.fromBytes(value));
+  }
+
+  get toToken(): Bytes {
+    let value = this.get("toToken");
+    return value.toBytes();
+  }
+
+  set toToken(value: Bytes) {
+    this.set("toToken", Value.fromBytes(value));
+  }
+
+  get inAmount(): BigInt {
+    let value = this.get("inAmount");
+    return value.toBigInt();
+  }
+
+  set inAmount(value: BigInt) {
+    this.set("inAmount", Value.fromBigInt(value));
+  }
+
+  get outAmount(): BigInt {
+    let value = this.get("outAmount");
+    return value.toBigInt();
+  }
+
+  set outAmount(value: BigInt) {
+    this.set("outAmount", Value.fromBigInt(value));
+  }
+
+  get maker(): Bytes {
+    let value = this.get("maker");
+    return value.toBytes();
+  }
+
+  set maker(value: Bytes) {
+    this.set("maker", Value.fromBytes(value));
+  }
+
+  get remainingInAmount(): BigInt {
+    let value = this.get("remainingInAmount");
+    return value.toBigInt();
+  }
+
+  set remainingInAmount(value: BigInt) {
+    this.set("remainingInAmount", Value.fromBigInt(value));
+  }
+
+  get amountTaken(): BigInt {
+    let value = this.get("amountTaken");
+    return value.toBigInt();
+  }
+
+  set amountTaken(value: BigInt) {
+    this.set("amountTaken", Value.fromBigInt(value));
+  }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
+  }
+
+  get updatedAt(): BigInt {
+    let value = this.get("updatedAt");
+    return value.toBigInt();
+  }
+
+  set updatedAt(value: BigInt) {
+    this.set("updatedAt", Value.fromBigInt(value));
+  }
+}
+
+export class OrderTaken extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save OrderTaken entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save OrderTaken entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("OrderTaken", id.toString(), this);
+  }
+
+  static load(id: string): OrderTaken | null {
+    return store.get("OrderTaken", id) as OrderTaken | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get orderId(): string {
+    let value = this.get("orderId");
+    return value.toString();
+  }
+
+  set orderId(value: string) {
+    this.set("orderId", Value.fromString(value));
+  }
+
+  get amountTaken(): BigInt {
+    let value = this.get("amountTaken");
+    return value.toBigInt();
+  }
+
+  set amountTaken(value: BigInt) {
+    this.set("amountTaken", Value.fromBigInt(value));
+  }
+
+  get taker(): Bytes {
+    let value = this.get("taker");
+    return value.toBytes();
+  }
+
+  set taker(value: Bytes) {
+    this.set("taker", Value.fromBytes(value));
+  }
+
+  get remainingInAmount(): BigInt {
+    let value = this.get("remainingInAmount");
+    return value.toBigInt();
+  }
+
+  set remainingInAmount(value: BigInt) {
+    this.set("remainingInAmount", Value.fromBigInt(value));
+  }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
+  }
+
+  get updatedAt(): BigInt {
+    let value = this.get("updatedAt");
+    return value.toBigInt();
+  }
+
+  set updatedAt(value: BigInt) {
+    this.set("updatedAt", Value.fromBigInt(value));
+  }
+}

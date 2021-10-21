@@ -1,16 +1,16 @@
-import { Address } from '@graphprotocol/graph-ts'
-import { AccountUpdated, MarginTrade } from '../../generated/MarginRouter/MarginRouter'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { AccountUpdated, MarginTrade, OrderMade, OrderTaken } from '../../generated/MarginRouter/MarginRouter'
 import { CrossMarginTrading } from '../../generated/CrossMarginTrading/CrossMarginTrading'
-import { PriceAware } from '../../generated/MarginRouter/PriceAware'
-import { Balance, AggregatedBalance, Swap, DailySwapVolume, MarginswapDayData } from '../../generated/schema'
+import { Balance, AggregatedBalance, Swap, DailySwapVolume, MarginswapDayData, Order, OrderTaken as TakenOrder } from '../../generated/schema'
 import { ONE_BI, ZERO_BD, ZERO_BI } from '../../utils/constants'
+import { PriceAware } from '../../generated/MarginRouter/PriceAware'
 
 /*
   NOTE: This address must be manually updated to match the CrossMarginTrading
   contract on the network you're deploying to.
   See deployment instructions in the README for more details.
 */
-const CROSS_MARGIN_CONTRACT_ADDRESS = '0xfDa3e986e38A913aC3300C2eff168d0D69d698B1'
+const CROSS_MARGIN_CONTRACT_ADDRESS = '0xEf13Ff3E1749606c11623C8b8064761ba70248e3'
 const START_DAY_ID = 18797
 
 export function handleAccountUpdated(event: AccountUpdated): void {
@@ -185,4 +185,39 @@ function getLatestMarginSwapDayData(lastDayCheck: number, startDayCheck: number)
   }
 
   return null
+}
+
+export function handleOrderMade(event: OrderMade): void {
+  let order = new Order(event.params.orderId.toString())
+  order.fromToken = event.params.fromToken
+  order.toToken = event.params.toToken
+  order.inAmount = event.params.inAmount
+  order.outAmount = event.params.outAmout
+  order.maker = event.params.maker
+  order.remainingInAmount = event.params.inAmount
+  order.amountTaken = ZERO_BI
+  order.createdAt = event.block.timestamp
+  order.updatedAt = event.block.timestamp
+
+  order.save()
+}
+
+export function handleOrderTaken(event: OrderTaken): void {
+  let order = Order.load(event.params.orderId.toString())
+  let orderTaken = new TakenOrder(event.transaction.hash.toHexString())
+
+  if (order) {
+    order.remainingInAmount = event.params.remainingInAmount
+    order.amountTaken = order.amountTaken.plus(event.params.amountTaken)
+    order.save()
+
+    orderTaken.orderId = order.id
+    orderTaken.amountTaken = event.params.amountTaken
+    orderTaken.taker = event.params.taker
+    orderTaken.remainingInAmount = event.params.remainingInAmount
+    orderTaken.createdAt = event.block.timestamp
+    orderTaken.updatedAt = event.block.timestamp
+
+    orderTaken.save()
+  }
 }

@@ -30,6 +30,10 @@ dataSources:
           handler: handleAccountUpdated
         - event: MarginTrade(indexed address,address,address,uint256,uint256)
           handler: handleMarginTrade
+        - event: OrderMade(uint256,address,address,uint256,uint256,address) 
+          handler: handleOrderMade
+        - event: OrderTaken(uint256,indexed address,uint256,uint256)
+          handler: handleOrderTaken
       file: ./src/mappings/margin-router.ts
   - kind: ethereum/contract
     name: MarginRouterIncentive

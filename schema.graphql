@@ -60,3 +60,26 @@ type MarginswapDayData @entity {
   createdAt: BigInt!
   updatedAt: BigInt!
 }
+
+type Order @entity {
+  id: ID!
+  fromToken: Bytes!
+  toToken: Bytes!
+  inAmount: BigInt!
+  outAmount: BigInt!
+  maker: Bytes!
+  remainingInAmount: BigInt!
+  amountTaken: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+}
+
+type OrderTaken @entity {
+  id: ID!
+  orderId: ID!
+  amountTaken: BigInt!
+  taker: Bytes!
+  remainingInAmount: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+}
