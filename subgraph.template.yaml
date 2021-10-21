@@ -23,6 +23,8 @@ dataSources:
           file: ./abis/IncentiveReporter.json
         - name: CrossMarginTrading
           file: ./abis/CrossMarginTrading.json
+        - name: PriceAware
+          file: ./abis/PriceAware.json
       eventHandlers:
         - event: AccountUpdated(indexed address)
           handler: handleAccountUpdated

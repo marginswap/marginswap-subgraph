@@ -1,10 +1,7 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts";
-import {
-  Lending,
-  AddToClaim,
-  SubtractFromClaim
-} from "../../generated/Lending/Lending"
-import { Balance, AggregatedBalance } from "../../generated/schema"
+import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Lending, AddToClaim, SubtractFromClaim } from '../../generated/Lending/Lending'
+import { Balance, AggregatedBalance } from '../../generated/schema'
+import { ZERO_BI } from '../../utils/constants'
 
 function handleClaimChange(contract: Lending, topic: Address, claimant: Address, timestamp: BigInt): void {
   let lenderBalanceId = claimant.toHex() + '-' + topic.toHex()
@@ -12,7 +9,7 @@ function handleClaimChange(contract: Lending, topic: Address, claimant: Address,
   let lenderBalance = Balance.load(lenderBalanceId)
   let newBalance = contract.hourlyBondAccounts(topic, claimant).value0
   let aggregatedBalance = AggregatedBalance.load(aggregatedBalanceId)
-  let originalBalance = BigInt.fromString('0')
+  let originalBalance = ZERO_BI
 
   if (lenderBalance) {
     originalBalance = lenderBalance.balance
