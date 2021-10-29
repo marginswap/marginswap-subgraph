@@ -12,7 +12,6 @@ import {
 } from '../../generated/schema'
 import { ONE_BI, ZERO_BD, ZERO_BI } from '../../utils/constants'
 import { PriceAware } from '../../generated/MarginRouter/PriceAware'
-import { log } from '@graphprotocol/graph-ts'
 
 /*
   NOTE: This address must be manually updated to match the CrossMarginTrading
@@ -131,7 +130,6 @@ export function handleMarginTrade(event: MarginTrade): void {
   let contractAddress = Address.fromHexString(CROSS_MARGIN_CONTRACT_ADDRESS) as Address
   let priceAwareContract = PriceAware.bind(contractAddress)
 
-  log.info('Inside handleMarginTrade: {}', [event.transaction.hash.toHexString()])
   let swap = new Swap(event.transaction.hash.toHexString())
   swap.trader = event.params.trader
   swap.fromAmount = event.params.fromAmount
@@ -144,7 +142,6 @@ export function handleMarginTrade(event: MarginTrade): void {
 
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
-  log.info('MarginSwapDayData Day Id: {}', [dayID.toString()])
   let volumeRecordId = dayID.toString() + '-' + event.params.fromToken.toHexString() + '-MARGIN'
   let tokenDailyVolume = DailySwapVolume.load(volumeRecordId)
   let marginswapDayData = MarginswapDayData.load(dayID.toString())
@@ -161,7 +158,6 @@ export function handleMarginTrade(event: MarginTrade): void {
   }
 
   let tradeValueInPeg = priceAwareContract.viewCurrentPriceInPeg(event.params.fromToken, event.params.fromAmount).toBigDecimal()
-  log.info('Trade value in peg result {}', [tradeValueInPeg.toString()])
   let pastMarginswapDayData = getLatestMarginSwapDayData(START_DAY_ID, dayID)
   let totalVolumeUSD = ZERO_BD
 
@@ -170,13 +166,11 @@ export function handleMarginTrade(event: MarginTrade): void {
   }
 
   if (marginswapDayData) {
-    log.info('We found marginswapdaydata', [])
     marginswapDayData.dailyVolumeUSD = marginswapDayData.dailyVolumeUSD.plus(tradeValueInPeg)
     marginswapDayData.totalVolumeUSD = marginswapDayData.totalVolumeUSD.plus(tradeValueInPeg)
     marginswapDayData.txCount = marginswapDayData.txCount.plus(ONE_BI)
     marginswapDayData.updatedAt = event.block.timestamp
   } else {
-    log.info("We didn't found marginswapdaydata", [])
     marginswapDayData = new MarginswapDayData(dayID.toString())
     marginswapDayData.dailyVolumeUSD = tradeValueInPeg
     marginswapDayData.totalVolumeUSD = totalVolumeUSD.plus(tradeValueInPeg)
