@@ -1,7 +1,15 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address } from '@graphprotocol/graph-ts'
 import { AccountUpdated, MarginTrade, OrderMade, OrderTaken } from '../../generated/MarginRouter/MarginRouter'
 import { CrossMarginTrading } from '../../generated/CrossMarginTrading/CrossMarginTrading'
-import { Balance, AggregatedBalance, Swap, DailySwapVolume, MarginswapDayData, Order, OrderTaken as TakenOrder } from '../../generated/schema'
+import {
+  Balance,
+  AggregatedBalance,
+  Swap,
+  DailySwapVolume,
+  MarginswapDayData,
+  Order,
+  OrderTaken as TakenOrder
+} from '../../generated/schema'
 import { ONE_BI, ZERO_BD, ZERO_BI } from '../../utils/constants'
 import { PriceAware } from '../../generated/MarginRouter/PriceAware'
 
@@ -10,7 +18,7 @@ import { PriceAware } from '../../generated/MarginRouter/PriceAware'
   contract on the network you're deploying to.
   See deployment instructions in the README for more details.
 */
-const CROSS_MARGIN_CONTRACT_ADDRESS = '0xEf13Ff3E1749606c11623C8b8064761ba70248e3'
+const CROSS_MARGIN_CONTRACT_ADDRESS = '0xAa4e3edb11AFa93c41db59842b29de64b72E355B'
 const START_DAY_ID = 18797
 
 export function handleAccountUpdated(event: AccountUpdated): void {
@@ -194,6 +202,7 @@ export function handleOrderMade(event: OrderMade): void {
   order.inAmount = event.params.inAmount
   order.outAmount = event.params.outAmout
   order.maker = event.params.maker
+  order.expiration = event.params.expiration
   order.remainingInAmount = event.params.inAmount
   order.amountTaken = ZERO_BI
   order.createdAt = event.block.timestamp

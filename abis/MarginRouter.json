@@ -43,11 +43,6 @@
       },
       {
         "internalType": "address",
-        "name": "_feeRecipient",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
         "name": "_roles",
         "type": "address"
       }
@@ -143,6 +138,12 @@
         "internalType": "address",
         "name": "maker",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "expiration",
+        "type": "uint256"
       }
     ],
     "name": "OrderMade",
@@ -461,19 +462,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "feeRecipient",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -525,6 +513,19 @@
       {
         "internalType": "uint256[]",
         "name": "amounts",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPendingOrders",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
         "type": "uint256[]"
       }
     ],
@@ -584,6 +585,11 @@
         "internalType": "uint256",
         "name": "_outAmount",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_expiration",
+        "type": "uint256"
       }
     ],
     "name": "makeOrder",
@@ -638,6 +644,11 @@
         "internalType": "address",
         "name": "maker",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "expiration",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -678,19 +689,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "recipient",
-        "type": "address"
-      }
-    ],
-    "name": "setFeeRecipient",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

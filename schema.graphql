@@ -68,6 +68,7 @@ type Order @entity {
   inAmount: BigInt!
   outAmount: BigInt!
   maker: Bytes!
+  expiration: BigInt!
   remainingInAmount: BigInt!
   amountTaken: BigInt!
   createdAt: BigInt!

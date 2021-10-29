@@ -16,6 +16,8 @@ dataSources:
       entities:
         - Balance
         - Swap
+        - Order
+        - OrderTaken
       abis:
         - name: MarginRouter
           file: ./abis/MarginRouter.json
@@ -30,7 +32,7 @@ dataSources:
           handler: handleAccountUpdated
         - event: MarginTrade(indexed address,address,address,uint256,uint256)
           handler: handleMarginTrade
-        - event: OrderMade(uint256,address,address,uint256,uint256,address) 
+        - event: OrderMade(uint256,address,address,uint256,uint256,address,uint256)  
           handler: handleOrderMade
         - event: OrderTaken(uint256,indexed address,uint256,uint256)
           handler: handleOrderTaken
