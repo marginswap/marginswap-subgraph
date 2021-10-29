@@ -16,6 +16,8 @@ dataSources:
       entities:
         - Balance
         - Swap
+        - Order
+        - OrderTaken
       abis:
         - name: MarginRouter
           file: ./abis/MarginRouter.json
