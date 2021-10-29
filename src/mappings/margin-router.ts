@@ -208,6 +208,7 @@ export function handleOrderMade(event: OrderMade): void {
   order.inAmount = event.params.inAmount
   order.outAmount = event.params.outAmout
   order.maker = event.params.maker
+  order.expiration = event.params.expiration
   order.remainingInAmount = event.params.inAmount
   order.amountTaken = ZERO_BI
   order.createdAt = event.block.timestamp

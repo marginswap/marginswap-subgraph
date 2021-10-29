@@ -98,6 +98,10 @@ export class OrderMade__Params {
   get maker(): Address {
     return this._event.parameters[5].value.toAddress();
   }
+
+  get expiration(): BigInt {
+    return this._event.parameters[6].value.toBigInt();
+  }
 }
 
 export class OrderTaken extends ethereum.Event {
@@ -136,19 +140,22 @@ export class MarginRouter__ordersResult {
   value2: BigInt;
   value3: BigInt;
   value4: Address;
+  value5: BigInt;
 
   constructor(
     value0: Address,
     value1: Address,
     value2: BigInt,
     value3: BigInt,
-    value4: Address
+    value4: Address,
+    value5: BigInt
   ) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
     this.value3 = value3;
     this.value4 = value4;
+    this.value5 = value5;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -158,6 +165,7 @@ export class MarginRouter__ordersResult {
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
     map.set("value4", ethereum.Value.fromAddress(this.value4));
+    map.set("value5", ethereum.Value.fromUnsignedBigInt(this.value5));
     return map;
   }
 }
@@ -373,21 +381,6 @@ export class MarginRouter extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  feeRecipient(): Address {
-    let result = super.call("feeRecipient", "feeRecipient():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_feeRecipient(): ethereum.CallResult<Address> {
-    let result = super.tryCall("feeRecipient", "feeRecipient():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   getAmountsIn(
     outAmount: BigInt,
     amms: Bytes,
@@ -466,6 +459,29 @@ export class MarginRouter extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
+  getPendingOrders(): Array<BigInt> {
+    let result = super.call(
+      "getPendingOrders",
+      "getPendingOrders():(uint256[])",
+      []
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_getPendingOrders(): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "getPendingOrders",
+      "getPendingOrders():(uint256[])",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+  }
+
   mainCharacterCache(param0: BigInt): Address {
     let result = super.call(
       "mainCharacterCache",
@@ -515,7 +531,7 @@ export class MarginRouter extends ethereum.SmartContract {
   orders(param0: BigInt): MarginRouter__ordersResult {
     let result = super.call(
       "orders",
-      "orders(uint256):(address,address,uint256,uint256,address)",
+      "orders(uint256):(address,address,uint256,uint256,address,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
@@ -524,14 +540,15 @@ export class MarginRouter extends ethereum.SmartContract {
       result[1].toAddress(),
       result[2].toBigInt(),
       result[3].toBigInt(),
-      result[4].toAddress()
+      result[4].toAddress(),
+      result[5].toBigInt()
     );
   }
 
   try_orders(param0: BigInt): ethereum.CallResult<MarginRouter__ordersResult> {
     let result = super.tryCall(
       "orders",
-      "orders(uint256):(address,address,uint256,uint256,address)",
+      "orders(uint256):(address,address,uint256,uint256,address,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -544,7 +561,8 @@ export class MarginRouter extends ethereum.SmartContract {
         value[1].toAddress(),
         value[2].toBigInt(),
         value[3].toBigInt(),
-        value[4].toAddress()
+        value[4].toAddress(),
+        value[5].toBigInt()
       )
     );
   }
@@ -733,12 +751,8 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[7].value.toBigInt();
   }
 
-  get _feeRecipient(): Address {
-    return this._call.inputValues[8].value.toAddress();
-  }
-
   get _roles(): Address {
-    return this._call.inputValues[9].value.toAddress();
+    return this._call.inputValues[8].value.toAddress();
   }
 }
 
@@ -1130,42 +1144,16 @@ export class MakeOrderCall__Inputs {
   get _outAmount(): BigInt {
     return this._call.inputValues[3].value.toBigInt();
   }
+
+  get _expiration(): BigInt {
+    return this._call.inputValues[4].value.toBigInt();
+  }
 }
 
 export class MakeOrderCall__Outputs {
   _call: MakeOrderCall;
 
   constructor(call: MakeOrderCall) {
-    this._call = call;
-  }
-}
-
-export class SetFeeRecipientCall extends ethereum.Call {
-  get inputs(): SetFeeRecipientCall__Inputs {
-    return new SetFeeRecipientCall__Inputs(this);
-  }
-
-  get outputs(): SetFeeRecipientCall__Outputs {
-    return new SetFeeRecipientCall__Outputs(this);
-  }
-}
-
-export class SetFeeRecipientCall__Inputs {
-  _call: SetFeeRecipientCall;
-
-  constructor(call: SetFeeRecipientCall) {
-    this._call = call;
-  }
-
-  get recipient(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class SetFeeRecipientCall__Outputs {
-  _call: SetFeeRecipientCall;
-
-  constructor(call: SetFeeRecipientCall) {
     this._call = call;
   }
 }

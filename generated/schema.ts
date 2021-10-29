@@ -536,6 +536,15 @@ export class Order extends Entity {
     this.set("maker", Value.fromBytes(value));
   }
 
+  get expiration(): BigInt {
+    let value = this.get("expiration");
+    return value.toBigInt();
+  }
+
+  set expiration(value: BigInt) {
+    this.set("expiration", Value.fromBigInt(value));
+  }
+
   get remainingInAmount(): BigInt {
     let value = this.get("remainingInAmount");
     return value.toBigInt();
