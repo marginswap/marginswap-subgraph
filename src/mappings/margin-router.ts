@@ -1,4 +1,4 @@
-import { Address } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 import { AccountUpdated, MarginTrade, OrderMade, OrderTaken } from '../../generated/MarginRouter/MarginRouter'
 import { CrossMarginTrading } from '../../generated/CrossMarginTrading/CrossMarginTrading'
 import {
@@ -12,14 +12,15 @@ import {
 } from '../../generated/schema'
 import { ONE_BI, ZERO_BD, ZERO_BI } from '../../utils/constants'
 import { PriceAware } from '../../generated/MarginRouter/PriceAware'
+//import { log } from '@graphprotocol/graph-ts'
 
 /*
   NOTE: This address must be manually updated to match the CrossMarginTrading
   contract on the network you're deploying to.
   See deployment instructions in the README for more details.
 */
-const CROSS_MARGIN_CONTRACT_ADDRESS = '0xAa4e3edb11AFa93c41db59842b29de64b72E355B'
-const START_DAY_ID = 18797
+const CROSS_MARGIN_CONTRACT_ADDRESS = '0x1c8F8091860450aa5Ec59DE486adBA0Ed5050642'
+const START_DAY_ID = '18797'
 
 export function handleAccountUpdated(event: AccountUpdated): void {
   let contractAddress = Address.fromHexString(CROSS_MARGIN_CONTRACT_ADDRESS) as Address
@@ -158,7 +159,7 @@ export function handleMarginTrade(event: MarginTrade): void {
   }
 
   let tradeValueInPeg = priceAwareContract.viewCurrentPriceInPeg(event.params.fromToken, event.params.fromAmount).toBigDecimal()
-  let pastMarginswapDayData = getLatestMarginSwapDayData(START_DAY_ID, dayID)
+  let pastMarginswapDayData = getLatestMarginSwapDayData(START_DAY_ID, dayID.toString())
   let totalVolumeUSD = ZERO_BD
 
   if (pastMarginswapDayData) {
@@ -183,9 +184,10 @@ export function handleMarginTrade(event: MarginTrade): void {
   marginswapDayData.save()
 }
 
-function getLatestMarginSwapDayData(lastDayCheck: number, startDayCheck: number): MarginswapDayData | null {
-  for (let i = startDayCheck - 1; i >= lastDayCheck; i--) {
-    let marginswapDayData = MarginswapDayData.load(i.toString())
+function getLatestMarginSwapDayData(startDayCheck: string, lastDayCheck: string): MarginswapDayData | null {
+  for (let i = parseInt(lastDayCheck) - 1; i >= parseInt(startDayCheck); i--) {
+    let id = BigInt.fromI32(i32(i)).toString() //casting index to i32 first before converting to BigInt
+    let marginswapDayData = MarginswapDayData.load(id)
 
     if (marginswapDayData) {
       return marginswapDayData
